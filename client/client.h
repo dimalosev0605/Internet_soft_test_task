@@ -8,6 +8,13 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 
+namespace Protocol_keys {
+    const QString data = "data";
+    const QString rect_desc_1 = "rectDescription1";
+    const QString rect_desc_2 = "rectDescription2";
+    const QString result = "result";
+}
+
 class Client : public QObject
 {
     Q_OBJECT
@@ -28,9 +35,6 @@ private slots:
     void disconnected();
     void ready_read();
     void bytes_written(qint64 bytes);
-    void stateChanged(QAbstractSocket::SocketState socketState);
-    void hostFound();
-    void error(QAbstractSocket::SocketError socketError);
 
 public:
     explicit Client(QObject *parent = nullptr);

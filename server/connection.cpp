@@ -20,27 +20,18 @@ void Connection::process_data()
         auto j_obj = j_doc.object();
         auto j_map = j_obj.toVariantMap();
 
-        const QString data_key = "data";
-        const QString rect_desc_1_key = "rectDescription1";
-        const QString rect_desc_2_key = "rectDescription2";
+        auto j_arr = j_map[Protocol_keys::data].toJsonArray();
 
-        auto j_arr = j_map[data_key].toJsonArray();
-
-        auto rect_desc_1_obj = j_arr[0].toObject();
-        auto rect_desc_1_map = rect_desc_1_obj.toVariantMap();
-        auto rect_desc_1 = rect_desc_1_map[rect_desc_1_key].toString();
-
-        auto rect_desc_2_obj = j_arr[1].toObject();
-        auto rect_desc_2_map = rect_desc_2_obj.toVariantMap();
-        auto rect_desc_2 = rect_desc_2_map[rect_desc_2_key].toString();
-
-        qDebug() << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$";
-        qDebug() << "rect_desc_1 = " << rect_desc_1;
-        qDebug() << "rect_desc_2 = " << rect_desc_2;
-        qDebug() << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$";
-
-        create_response(rect_desc_2);
-
+        const int magic_number = 2;
+        if(j_arr.size() == magic_number) {
+            auto rect_desc_2_obj = j_arr[1].toObject();
+            auto rect_desc_2_map = rect_desc_2_obj.toVariantMap();
+            auto rect_desc_2 = rect_desc_2_map[Protocol_keys::rect_desc_2].toString();
+            qDebug() << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$";
+            qDebug() << "rect_desc_2 = " << rect_desc_2;
+            qDebug() << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$";
+            create_response(rect_desc_2);
+        }
         data.clear();
     }
 }
@@ -49,11 +40,9 @@ void Connection::create_response(const QString& response)
 {
     QJsonArray j_arr;
 
-    QJsonObject response_j_arr_obj;
-    const QString res_key = "result";
-    response_j_arr_obj.insert(res_key, response);
-
-    j_arr.append(response_j_arr_obj);
+    QJsonObject j_obj;
+    j_obj.insert(Protocol_keys::result, response);
+    j_arr.append(j_obj);
 
     QJsonDocument j_doc(j_arr);
     socket.write(j_doc.toJson());
