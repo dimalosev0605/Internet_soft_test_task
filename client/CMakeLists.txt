@@ -8,7 +8,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # QtCreator supports the following variables for Android, which are identical to qmake Android variables.
@@ -25,6 +25,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #endif()
 
 find_package(Qt5 COMPONENTS Core Quick REQUIRED)
+find_package(Qt5 COMPONENTS Network REQUIRED)
 
 if(ANDROID)
     add_library(client SHARED
@@ -35,10 +36,12 @@ else()
     add_executable(client
       main.cpp
       qml.qrc
+      client.h
+      client.cpp
     )
 endif()
 
 target_compile_definitions(client
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(client
-  PRIVATE Qt5::Core Qt5::Quick)
+  PRIVATE Qt5::Core Qt5::Quick Qt5::Network)
