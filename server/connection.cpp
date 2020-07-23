@@ -27,9 +27,6 @@ void Connection::process_data()
             auto rect_desc_2_obj = j_arr[1].toObject();
             auto rect_desc_2_map = rect_desc_2_obj.toVariantMap();
             auto rect_desc_2 = rect_desc_2_map[Protocol_keys::rect_desc_2].toString();
-            qDebug() << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$";
-            qDebug() << "rect_desc_2 = " << rect_desc_2;
-            qDebug() << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$";
             create_response(rect_desc_2);
         }
         data.clear();
@@ -42,6 +39,7 @@ void Connection::create_response(const QString& response)
 
     QJsonObject j_obj;
     j_obj.insert(Protocol_keys::result, response);
+
     j_arr.append(j_obj);
 
     QJsonDocument j_doc(j_arr);

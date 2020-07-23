@@ -18,16 +18,15 @@ void Client::connect_to_server()
 
 void Client::send_message()
 {
-    QJsonObject j_obj;
     QJsonArray j_arr;
 
     insert_obj(j_arr, Protocol_keys::rect_desc_1, "10, 10, 450, 230");
     insert_obj(j_arr, Protocol_keys::rect_desc_2, "50, 12, 40, 204");
 
+    QJsonObject j_obj;
     j_obj.insert(Protocol_keys::data, j_arr);
 
     QJsonDocument j_doc(j_obj);
-
     socket.write(j_doc.toJson());
 }
 
@@ -66,7 +65,6 @@ void Client::process_data()
             auto response_obj = j_arr[0].toObject();
             auto response_map = response_obj.toVariantMap();
             auto response = response_map[Protocol_keys::result].toString();
-            qDebug() << "RESPONSE = " << response;
             emit response_received(response);
         }
         data.clear();
