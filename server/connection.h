@@ -21,19 +21,14 @@ private:
     void create_response(const QString& response);
 
 private slots:
-
     void connected();
     void disconnected();
     void ready_read();
     void bytes_written(qint64 bytes);
-    void stateChanged(QAbstractSocket::SocketState socketState);
-    void hostFound();
-    void error(QAbstractSocket::SocketError socketError);
 
 public:
     explicit Connection(qint64 socket_descriptor, QObject *parent = nullptr);
     ~Connection();
-
 };
 
 #endif // CONNECTION_H

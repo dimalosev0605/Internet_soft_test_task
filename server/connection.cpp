@@ -5,13 +5,10 @@ Connection::Connection(qint64 socket_descriptor, QObject *parent)
 {
     qDebug() << this << "created, thread: " << QThread::currentThreadId();
 
-    connect(&socket, &QTcpSocket::hostFound, this, &Connection::hostFound);
     connect(&socket, &QTcpSocket::connected, this, &Connection::connected);
-    connect(&socket, &QTcpSocket::stateChanged, this, &Connection::stateChanged);
+    connect(&socket, &QTcpSocket::disconnected, this, &Connection::disconnected);
     connect(&socket, &QTcpSocket::readyRead, this, &Connection::ready_read);
     connect(&socket, &QTcpSocket::bytesWritten, this, &Connection::bytes_written);
-    connect(&socket, &QTcpSocket::disconnected, this, &Connection::disconnected);
-    connect(&socket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error), this, &Connection::error);
 
     socket.setSocketDescriptor(socket_descriptor);
 }
@@ -85,22 +82,7 @@ void Connection::ready_read()
     process_data();
 }
 
-void Connection::bytes_written(qint64 bytes)
+void Connection::bytes_written([[maybe_unused]]qint64 bytes)
 {
     qDebug() << this << "bytes_written, thread: " << QThread::currentThreadId();
-}
-
-void Connection::stateChanged(QAbstractSocket::SocketState socketState)
-{
-    qDebug() << this << "stateChanged, thread: " << QThread::currentThreadId();
-}
-
-void Connection::hostFound()
-{
-    qDebug() << this << "hostFound, thread: " << QThread::currentThreadId();
-}
-
-void Connection::error(QAbstractSocket::SocketError socketError)
-{
-    qDebug() << this << "error, thread: " << QThread::currentThreadId();
 }

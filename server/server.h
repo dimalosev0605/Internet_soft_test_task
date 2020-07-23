@@ -4,7 +4,8 @@
 #include <QTcpServer>
 #include <QDebug>
 #include <QThread>
-#include <algorithm>
+
+#include <utility>
 
 #include "thread_connections.h"
 
@@ -13,7 +14,8 @@ class Server: public QTcpServer
     Q_OBJECT
 
     std::size_t threads_count;
-    std::vector<Thread_connections*> connections;
+    std::vector<std::unique_ptr<Thread_connections>> thread_connections;
+    std::mutex divide_load_mutex;
 
 private:
     void divide_load(qintptr socket_descriptor);

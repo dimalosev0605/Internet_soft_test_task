@@ -10,9 +10,10 @@ class Thread_connections : public QObject
     Q_OBJECT
 
     std::size_t count_of_connections = 0;
+    std::mutex& divide_load_mutex;
 
 public:
-    explicit Thread_connections(QObject *parent = nullptr);
+    explicit Thread_connections(std::mutex& divide_lock_mutex, QObject *parent = nullptr);
 
 public slots:
     void accept_socket_descriptor(qintptr socket_descriptor);

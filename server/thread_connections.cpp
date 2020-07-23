@@ -1,7 +1,8 @@
 #include "thread_connections.h"
 
-Thread_connections::Thread_connections(QObject *parent)
-    : QObject(parent)
+Thread_connections::Thread_connections(std::mutex& divide_lock_mutex, QObject *parent)
+    : QObject(parent),
+      divide_load_mutex(divide_lock_mutex)
 {
     qDebug() << this << "created, thread: " << QThread::currentThreadId();
     QThread* thread = new QThread(this);
@@ -13,7 +14,10 @@ Thread_connections::Thread_connections(QObject *parent)
 
 void Thread_connections::accept_socket_descriptor(qintptr socket_descriptor)
 {
-    ++count_of_connections;
+    {
+        std::lock_guard<std::mutex> lock(divide_load_mutex);
+        ++count_of_connections;
+    }
     qDebug() << this << "increase count of connections to: " << count_of_connections << ", thread: " << QThread::currentThreadId();
 
     Connection* new_connection = new Connection(socket_descriptor);
@@ -22,11 +26,13 @@ void Thread_connections::accept_socket_descriptor(qintptr socket_descriptor)
 
 std::size_t Thread_connections::get_count_of_connections() const
 {
+    std::lock_guard<std::mutex> lock(divide_load_mutex);
     return count_of_connections;
 }
 
 void Thread_connections::decrease_count_of_connections()
 {
+    std::lock_guard<std::mutex> lock(divide_load_mutex);
     --count_of_connections;
     qDebug() << this << "decrease count of connections to: " << count_of_connections << ", thread: " << QThread::currentThreadId();
 }
